@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.dao.Mapper">
+
+	<!-- 配置MySQL和实体类 -->
+	
+	
+	<!-- 系统管理员 -->
+	<!-- private int id;
+	private String name;//用户名
+	private String pwd;//密码 -->
+	<resultMap type="org.entity.Administrator" id="AdministratorMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="pwd" column="pwd"/>
+	</resultMap>
+	
+	<!-- 添加系统管理员 -->
+	<insert id="addAdministrator">
+		insert into administrator(name,pwd) values(#{0},#{1})
+	</insert>
+	
+	<!-- 查找所有系统管理员 -->
+	<select id="getAdministrators" resultMap="AdministratorMap">
+		SELECT * FROM administrator 
+	</select>
+	
+	<!--通过id查找系统管理员 -->
+	<select id="getAdministratorById" parameterType="int" resultMap="AdministratorMap">
+		SELECT * FROM administrator WHERE id=#{0}
+	</select>
+	
+	<!--通过NamePwd查找系统管理员 -->
+	<select id="getAdministratorByNamePwd"  resultMap="AdministratorMap">
+		SELECT * FROM administrator WHERE name=#{0} and pwd=#{1}
+	</select>
+	
+	<!-- 删除系统管理员 -->
+	<delete id="delAdministrator" parameterType="int">
+		DELETE FROM administrator WHERE id=#{0}
+	</delete>
+	
+	<!-- 修改系统管理员 -->
+	<update id="updateAdministrator">
+		UPDATE administrator SET name=#{0},pwd=#{1}  WHERE id=#{2}
+	</update>
+	
+	<!-- 修改密码 -->
+	<update id="updatePwdByName" statementType="STATEMENT">
+		UPDATE ${tableName} SET pwd=${pwd}  WHERE name='${name}'
+	</update>
+	
+	
+	<!-- 楼宇管理员 -->
+	<!-- private int id;
+	private String name;//用户名
+	private String pwd;//密码
+	private String realname;//真实姓名
+	private String sex;//性别
+	private String contact;//联系电话 -->
+	<resultMap type="org.entity.BuildingAdministrator" id="BuildingAdministratorMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="pwd" column="pwd"/>
+		<result property="realname" column="realname"/>
+		<result property="sex" column="sex"/>
+		<result property="contact" column="contact"/>
+	</resultMap>
+	<!-- 添加楼宇管理员 -->
+	<insert id="addBuildingAdministrator">
+		insert into buildingadministrator(name,pwd,realname,sex,contact) values(#{0},#{1},#{2},#{3},#{4})
+	</insert>
+	<!-- 查找所有楼宇管理员 -->
+	<select id="getBuildingAdministrators" resultMap="BuildingAdministratorMap">
+		SELECT * FROM buildingadministrator 
+	</select>
+	<!--通过NamePwd查找楼宇管理员 -->
+	<select id="getBuildingAdministratorByNamePwd"  resultMap="BuildingAdministratorMap">
+		SELECT * FROM buildingadministrator WHERE name=#{0} and pwd=#{1}
+	</select>
+	<!-- 通过id查找楼宇管理员 -->
+	<select id="getBuildingAdministratorById" parameterType="int" resultMap="BuildingAdministratorMap">
+		select * from buildingAdministrator where id = #{0}
+	</select>
+	<!-- //通过用户名/真实姓名/电话查找楼宇管理员 -->
+	<select id="getBuildingAdministratorByor" statementType="STATEMENT"  resultMap="BuildingAdministratorMap">
+		select * from buildingAdministrator where ${SearchRow} = '${SearchKey}'
+	</select>
+	<!-- 删除楼宇管理员-->
+	<delete id="delBuildingAdministrator" parameterType="int">
+		DELETE FROM buildingAdministrator WHERE id=#{0}
+	</delete>
+	<!-- 修改楼宇管理员 -->
+	<update id="updateBuildingAdministrator">
+		UPDATE buildingAdministrator SET name=#{0},pwd=#{1},realname=#{2},sex=#{3},contact=#{4}  WHERE id=#{5}
+	</update>
+	
+	
+	<!-- 学生 -->
+	<!-- private int id;
+	private int stu_ID;//学号
+	private String name;//姓名
+	private String pwd;//密码
+	private String sex;//性别
+	private String class1;//班级
+	private String state;//状态
+	private Dormitory dormitory;//宿舍 -->
+	<resultMap type="org.entity.Student" id="StudentMap">
+		<id property="id" column="id"/>
+		<result property="stu_ID" column="stu_ID"/>
+		<result property="name" column="name"/>
+		<result property="pwd" column="pwd"/>
+		<result property="sex" column="sex"/>
+		<result property="class1" column="class1"/>
+		<result property="state" column="state"/>
+		<result property="exitnotes" column="exitnotes"/>
+		<result property="time" column="time"/> 
+		<association property="dormitory" column="dormitory_ID" javaType="org.entity.Dormitory" select="getDormitoryById"></association>
+	</resultMap>
+	<!-- 添加学生 -->
+	<insert id="addStudent">
+		insert into student(stu_ID,name,pwd,sex,class1,state) values(#{0},#{1},#{2},#{3},#{4},#{5})
+	</insert>
+	<!-- 学生入住宿舍 -->
+	<update id="addStudentIntoDormitory">
+		update student set dormitory_ID=#{0} where id=#{1}
+	</update>
+	<!-- 查找未毕业学生 -->
+	<select id="getStudentsUnemigration" resultMap="StudentMap">
+		SELECT * FROM student where state like '%入住%'
+	</select>
+	<!-- 查找所有学生 -->
+	<select id="getStudents" resultMap="StudentMap">
+		SELECT * FROM student
+	</select>
+	<!-- 通过id查找学生 -->
+	<select id="getStudentById" parameterType="int" resultMap="StudentMap">
+		select * from student where id=#{0}
+	</select>
+	<!-- 通过stu_ID查找学生 -->
+	<select id="getStudentBystu_ID" parameterType="int" resultMap="StudentMap">
+		select * from student where stu_ID=#{0}
+	</select>
+	<!--通过NamePwd查找学生 -->
+	<select id="getStudentByNamePwd"  resultMap="StudentMap">
+		SELECT * FROM student WHERE name=#{0} and pwd=#{1}
+	</select>
+	<!-- //通过state/学号/真实姓名/电话查找学生 -->
+	<select id="getstudentByor" statementType="STATEMENT"  resultMap="StudentMap">
+		select * from student where state='${State}' and ${SearchRow} = '${SearchKey}'
+	</select>
+	<!-- 删除学生 -->
+	<delete id="delStudent" parameterType="int">
+		DELETE FROM student WHERE id=#{0}
+	</delete>
+	<!-- 修改学生 -->
+	<update id="updateStudent">
+		update student set stu_ID=#{0},name=#{1},pwd=#{2},sex=#{3},class1=#{4} where id=#{5}
+	</update>
+	<!-- 通过学号修改学生所住宿舍 -->
+	<update id="updateStudentDormitoryIdBystu_ID">
+		update student set dormitory_ID=#{0} where stu_ID=#{1}
+	</update>
+	<!-- 修改学生状态 -->
+	<update id="updateStudentstate">
+		update student set state=#{0} where id=#{1}
+	</update>
+	<!-- 迁出学生 -->
+	<update id="updateStudentstateAndExitnotes">
+		update student set state=#{0},dormitory_ID=null,exitnotes=#{1},time=#{2} where id=#{3}
+	</update>
+	
+	
+	<!-- 楼宇
+	private int id;
+	private String name;//名称
+	private String introduction;//简介
+	private BuildingAdministrator buildingAdministrator;//管理员
+	private String sex;//男女 -->
+	<resultMap type="org.entity.Building" id="BuildingMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="introduction" column="introduction"/>
+		<result property="sex" column="sex"/>
+		<association property="buildingAdministrator" column="buildingadministrator_ID" javaType="org.entity.BuildingAdministrator" select="getBuildingAdministratorById"></association>
+	</resultMap>
+	<!-- 添加楼宇 -->
+	<insert id="addBuilding">
+		insert into building(name,introduction,sex) values(#{0},#{1},#{2})
+	</insert>
+	<!-- 添加楼宇的管理员 -->
+	<update id="updateBuilding_buildingadministrator_ID_ById">
+		update building set buildingadministrator_ID=#{0} where id=#{1}
+	</update>
+	<!-- 查找所有楼宇 -->
+	<select id="getBuildings" resultMap="BuildingMap">
+		SELECT * FROM building
+	</select>
+	<!-- 通过id查找楼宇 -->
+	<select id="getBuildingById" parameterType="int" resultMap="BuildingMap">
+		select * from building where id=#{0}
+	</select>
+	<!-- 通过name查找楼宇 -->
+	<select id="getBuildingByName" parameterType="String" resultMap="BuildingMap">
+		select * from building where name=#{0} 
+	</select>
+	
+	<!-- 删除楼宇 -->
+	<delete id="delBuilding" parameterType="int">
+		DELETE FROM building WHERE id=#{0}
+	</delete>
+	<!-- 修改楼宇 -->
+	<update id="updateBuilding" >
+		update building set name=#{0},introduction=#{1},sex=#{2} where id=#{3}
+	</update>
+	
+	
+	<!-- 宿舍
+	private int id;
+	private Building building;//楼宇
+	private String name;//宿舍号
+	private String type;//宿舍类型
+	private int number;//人数
+	private String contact;//联系电话 -->
+	<resultMap type="org.entity.Dormitory" id="DormitoryMap">
+		<id property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="type" column="type"/>
+		<result property="number" column="number"/>
+		<result property="contact" column="contact"/>
+		<association property="building" column="building_ID" javaType="org.entity.Building" select="getBuildingById"></association>
+	</resultMap>
+	<!-- 添加宿舍 -->
+	<insert id="addDormitory">
+		insert into dormitory(building_ID,name,type,number,contact) values(#{0},#{1},#{2},#{3},#{4})
+	</insert>
+	<!-- 查找所有宿舍-->
+	<select id="getDormitorys" resultMap="DormitoryMap">
+		SELECT * FROM dormitory 
+	</select>
+	<!-- 通过id查找宿舍 -->
+	<select id="getDormitoryById" parameterType="int" resultMap="DormitoryMap">
+		select * from dormitory where id = #{0}
+	</select>
+	
+	<!-- 通过/楼宇/宿舍名/电话查找宿舍 -->
+	<select id="getDormitoryByCon" parameterType="org.entity.Dormitory" resultMap="DormitoryMap">
+		select * from dormitory where 1=1	<if test="building_ID != null">
+												and	building_ID=#{building_ID}
+											</if>
+											<if test="name != null">
+												and name=#{name}
+											</if>
+											<if test="contact != null">
+												and contact=#{contact}
+											</if>
+	</select>
+	<!-- 通过/building_ID查找宿舍 -->
+	<select id="getDormitoryBybuilding_ID" parameterType="int" resultMap="DormitoryMap">
+		select * from dormitory where building_ID=#{building_ID}
+	</select>
+	<!-- 删除宿舍 -->
+	<delete id="delDormitory" parameterType="int">
+		DELETE FROM dormitory WHERE id=#{0}
+	</delete>
+	<!-- 修改宿舍 -->
+	<update id="updateDormitory">
+		update dormitory set building_ID=#{0},name=#{1},type=#{2},number=#{3},contact=#{4} where id=#{5}
+	</update>
+	
+	<!-- 缺寝
+	private int id;
+	private Student student;//入住学生
+	private String time ;//缺勤日期
+	private String des;//备注 -->
+	<resultMap type="org.entity.Lackofsleep" id="LackofsleepMap">
+		<id property="id" column="id"/>
+		<result property="time" column="time"/>
+		<result property="des" column="des"/>
+		<association property="student" column="stu_ID" javaType="org.entity.Student" select="getStudentBystu_ID"></association>
+	</resultMap>
+	<!-- 添加缺寝记录 -->
+	<insert id="addLackofsleep">
+		insert into lackofsleep(stu_ID,time,des) values(#{0},#{1},#{2})
+	</insert>
+	<!-- 查找所有缺寝记录-->
+	<select id="getLackofsleeps" resultMap="LackofsleepMap">
+		SELECT * FROM lackofsleep 
+	</select>
+	<!-- 通过学生stu_ID查找缺寝记录 -->
+	<select id="getLackofsleepsBystu_ID" parameterType="int" resultMap="LackofsleepMap">
+		select * from lackofsleep where stu_ID = #{0}
+	</select>
+	<!-- 删除缺寝记录 -->
+	<delete id="delLackofsleep" parameterType="int">
+		DELETE FROM lackofsleep WHERE id=#{0}
+	</delete>
+	
+</mapper>
